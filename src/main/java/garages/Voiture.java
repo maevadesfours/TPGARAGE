@@ -29,11 +29,13 @@ public class Voiture {
 	 */
 	public void entreAuGarage(Garage g) throws Exception {
 		// Et si la voiture est déjà dans un garage ?
-
+            if (estDansUnGarage() && myStationnements.isEmpty()==false){
+			throw new java.lang.Exception("Stationnements déjà en cours");
+		}
 		Stationnement s = new Stationnement(this, g);
 		myStationnements.add(s);
 	}
-
+        
 	/**
 	 * Fait sortir la voiture du garage
 	 * Précondition : la voiture doit être dans un garage
@@ -41,27 +43,39 @@ public class Voiture {
 	 * @throws java.lang.Exception si la voiture n'est pas dans un garage
 	 */
 	public void sortDuGarage() throws Exception {
-		throw new UnsupportedOperationException("Pas encore implémenté");
-		// TODO: Implémenter cette méthode
-		// Trouver le dernier stationnement de la voiture
-		// Terminer ce stationnement
+            
+            if (estDansUnGarage()==false || myStationnements.isEmpty()){
+			throw new java.lang.Exception("Pas  de stationnement en cours");
+		}
+		myStationnements.get(myStationnements.size()-1).terminer();
 	}
-
+	
 	/**
 	 * @return l'ensemble des garages visités par cette voiture
 	 */
 	public Set<Garage> garagesVisites() {
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		HashSet<Garage> garagesVisites = new HashSet<Garage>();
+		for(Stationnement stat : myStationnements){
+			garagesVisites.add(stat.getGarage());
+		}
+		return garagesVisites;
 	}
 
 	/**
 	 * @return vrai si la voiture est dans un garage, faux sinon
 	 */
 	public boolean estDansUnGarage() {
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
-		// Vrai si le dernier stationnement est en cours
+		boolean r = true;
+		if(myStationnements.isEmpty()){
+			r = false;
+		}
+		else{
+			Stationnement dernierStationnement = myStationnements.get(myStationnements.size()-1);
+			if(!dernierStationnement.estEnCours()){
+				r = false;
+			}
+		}
+		return r;
 	}
 
 	/**
@@ -81,9 +95,15 @@ public class Voiture {
 	 * @param out l'endroit où imprimer (ex: System.out)
 	 */
 	public void imprimeStationnements(PrintStream out) {
-		// TODO: Implémenter cette méthode
-		// Utiliser les méthodes toString() de Garage et Stationnement
-		throw new UnsupportedOperationException("Pas encore implémenté");
+            for(Garage g : this.garagesVisites()){
+		out.println(g + ":");
+		for(Stationnement s : myStationnements){
+                    if(s.getGarage().equals(g)){
+                        out.println("       " + s);
+				}
+			}
+		}
+
 	}
 
 }
